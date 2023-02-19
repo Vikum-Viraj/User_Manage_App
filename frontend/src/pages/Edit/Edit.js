@@ -8,6 +8,9 @@ import Select from 'react-select';
 import Spiner from '../../components/Spiner/Spiner';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify'
+import { singleUsergetfunc } from '../../services/Apis';
+import { useParams } from 'react-router-dom';
+import { BASE_URL } from '../../services/helper';
 
 const Edit = () => {
 
@@ -25,9 +28,13 @@ const Edit = () => {
   console.log(inputdata);
 
   const [status, setStatus] = useState("Active");
+  const [imgdata,setImagedata] = useState("")
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState("");
+
   const [showspin, setShowSpin] = useState(true);
+
+  const {id} = useParams();
 
 
   const options = [
@@ -48,10 +55,30 @@ const Edit = () => {
         setImage(e.target.files[0])
   }
 
+ 
+
+
+  const userProfileGet = async() => {
+
+    const response = await singleUsergetfunc(id)
+    if(response.status === 200){
+      //console.log(response)
+      setInputData(response.data)
+      setStatus(response.data.status)
+      setImagedata(response.data.profile)     
+
+    }else{
+      console.log("error")
+    }
+  }
+
+
   useEffect(() => {
     if(image){
+      setImagedata("")
       setPreview(window.URL.createObjectURL(image))
     }
+    userProfileGet()
     setTimeout(() =>{
       setShowspin(false)
     },1200)
@@ -98,13 +125,13 @@ const Edit = () => {
       <h2 className='text-center mt-1'>Update Your Details</h2>
       <Card className='shadow mt-3 p-3'>
       <div className="profile_div text-center">
-      <img src= {preview ? preview : "/man.png" }alt="img" />
+      <img src= {image ? preview : `${BASE_URL}/uploads/${imgdata}` }alt="img" />
         </div>
         <Form>
           <Row>
         <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
           <Form.Label>First Name</Form.Label>
-          <Form.Control type="text" name='fname' value={inputdata.fname} onChange={setInputValue} placeholder="Enter First Nmae" />
+          <Form.Control type="text" name='fname' defaultValue={inputdata.fname} onChange={setInputValue} placeholder="Enter First Nmae" />
         </Form.Group> 
         <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
           <Form.Label>Last Name</Form.Label>
@@ -125,6 +152,7 @@ const Edit = () => {
               label={`Male`}
               name="gender"
               value={"Male"}
+              checked={inputdata.gender == "Male" ? true:false}
               onChange={setInputValue}
             />
              <Form.Check 
@@ -132,6 +160,7 @@ const Edit = () => {
               label={`Female`}
               name="gender"
               value={"Female"}
+              checked={inputdata.gender == "Female" ? true:false}
               onChange={setInputValue}
             />
         </Form.Group>
