@@ -5,9 +5,10 @@ import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Badge from 'react-bootstrap/Badge';
+import { BASE_URL } from '../../services/helper';
+import { NavLink } from 'react-router-dom';
 
-
-const Tables = () => {
+const Tables = ({userdata}) => {
   return (
     <>
     <div className='container'>
@@ -27,16 +28,20 @@ const Tables = () => {
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <td>1</td>
-        <td>2</td>
-        <td>3</td>
-        <td>4</td>
+        {
+          userdata.length > 0 ? userdata.map((element,index) => {
+            return (
+              <>
+        <tr>
+        <td>{index}</td>
+        <td>{element.fname + element.lname}</td>
+        <td>{element.email}</td>
+        <td>{element.gender}</td>
         <td className='d-flex align-items-center'>
         <Dropdown className='text-center'>
                 <Dropdown.Toggle className='dropdown_btn' id="dropdown-basic">
-                  <Badge bg="primary">
-                  Active <i class="fa-solid fa-angle-down"></i>
+                  <Badge bg= {element.status === "Active"? "primary": "danger"}>
+                  {element.status} <i class="fa-solid fa-angle-down"></i>
                   </Badge>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -46,7 +51,7 @@ const Tables = () => {
           </Dropdown>
         </td>
         <td className='img_parent'>
-          <img src = "/man.png"/>
+          <img src = {`${BASE_URL}/uploads/${element.profile}`} />
         </td>
         <td>
         <Dropdown className='text-center'>
@@ -69,48 +74,10 @@ const Tables = () => {
           </Dropdown>
         </td>
       </tr>
-      <tr>
-        <td>1</td>
-        <td>2</td>
-        <td>3</td>
-        <td>4</td>
-        <td className='d-flex align-items-center'>
-        <Dropdown className='text-center'>
-                <Dropdown.Toggle className='dropdown_btn' id="dropdown-basic">
-                  <Badge bg="primary">
-                  Active <i class="fa-solid fa-angle-down"></i>
-                  </Badge>
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item >Active</Dropdown.Item>
-                  <Dropdown.Item >Inactive</Dropdown.Item>
-                </Dropdown.Menu>
-          </Dropdown>
-        </td>
-        <td className='img_parent'>
-          <img src = "/man.png"/>
-        </td>
-        <td>
-        <Dropdown className='text-center'>
-                <Dropdown.Toggle variant='light' className='action' id="dropdown-basic">
-                  
-                  <i class="fa-sharp fa-solid fa-ellipsis-vertical"></i>
-                  
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item >
-                  <i class="fa-regular fa-eye" style={{color:"green"}} ></i> <span>View</span>
-                  </Dropdown.Item>
-                  <Dropdown.Item >
-                  <i  class="fa-sharp fa-regular fa-pen-to-square" style={{color:"blue"}} ></i> <span>Update</span>
-                  </Dropdown.Item>
-                  <Dropdown.Item >
-                  <i class="fa-light fa-trash" style={{color:"red"}}></i> <span>Delete</span>
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-          </Dropdown>
-        </td>
-      </tr>        
+      </>
+            )
+          }):<div className='no_data text-center'>No Data Found</div>
+        }  
       </tbody>
       </Table>
       </Card>  

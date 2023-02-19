@@ -8,9 +8,11 @@ import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spiner';
 import { addData } from '../../components/context/ContextProvider';
 import Alert from 'react-bootstrap/Alert';
+import { usergetfunc } from '../../services/Apis';
 
 const Home = () => {
 
+const [userdata,setUserdata] = useState([]);
 const [showspin,setShowspin] = useState(true);
 const {useradd,setUseradd} = useContext(addData)
 
@@ -20,7 +22,19 @@ const adduser = () =>{
   navigate("/register")
 }
 
+const userGet = async() =>{
+
+  const response = await usergetfunc()
+  console.log(response)
+  if(response.status === 200){
+    setUserdata(response.data)
+  }else{
+    console.log("Error for get user")
+  }
+}
+
 useEffect(() => {
+  userGet();
   setTimeout(() =>{
     setShowspin(false)
   },1200)
@@ -128,7 +142,7 @@ useEffect(() => {
           </div>
       </div><br></br>
       {
-        showspin ? <Spiner/> : <Tables/>
+        showspin ? <Spiner/> : <Tables userdata={userdata}/>
       }
       
     </div>

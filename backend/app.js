@@ -9,6 +9,7 @@ const DB = process.env.MONGO_URL
 
 app.use(express.json());
 app.use(cors());
+app.use("/uploads",express.static("./uploads"));
 app.use(router)
 
 mongoose.set('strictQuery', false);

@@ -4,6 +4,6 @@ const controllers = require("../Controllers/usersControllers");
 const upload = require("../multerconfig/storageConfig")
 
 router.post("/user/register",upload.single("user_profile"),controllers.userpost)
-
+router.get("/user/details",controllers.userget)
 
 module.exports = router
