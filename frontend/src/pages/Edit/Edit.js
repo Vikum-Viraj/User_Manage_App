@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import "./edit.css"
 import Card from "react-bootstrap/Card"
 import Button from 'react-bootstrap/Button';
@@ -8,9 +8,11 @@ import Select from 'react-select';
 import Spiner from '../../components/Spiner/Spiner';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify'
-import { singleUsergetfunc } from '../../services/Apis';
-import { useParams } from 'react-router-dom';
+import { editfunc, singleUsergetfunc } from '../../services/Apis';
+import { updateData } from '../../components/context/ContextProvider';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL } from '../../services/helper';
+
 
 const Edit = () => {
 
@@ -24,6 +26,7 @@ const Edit = () => {
     gender: "",
     location: ""
   })
+  const navigate = useNavigate();
 
   console.log(inputdata);
 
@@ -31,6 +34,8 @@ const Edit = () => {
   const [imgdata,setImagedata] = useState("")
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState("");
+
+  const {update,setUpdate} = useContext(updateData)
 
   const [showspin, setShowSpin] = useState(true);
 
@@ -84,7 +89,7 @@ const Edit = () => {
     },1200)
   },[image])
 
-  const submitUserData = (e) => {
+  const submitUserData = async(e) => {
 
     e.preventDefault();
     const { fname, lname, email, mobile, gender, location } = inputdata;
@@ -109,7 +114,25 @@ const Edit = () => {
     } else if (location === "") {
       toast.error("location is Required !")
     } else{
-      toast.success("Registation is success")
+      const data = new FormData();
+      data.append("fname",fname);
+      data.append("lname",lname);
+      data.append("email",email);
+      data.append("mobile",mobile);
+      data.append("gender",gender);
+      data.append("status",status);
+      data.append("user_profile",image || imgdata);
+      data.append("location",location);
+
+      const config = {
+        "Content-Type":"multipart/form-data"
+      }
+
+      const response = await editfunc(id,data,config)
+      if(response.status === 200){
+        setUpdate(response.data)
+        navigate("/")
+      }
     }
 
   }

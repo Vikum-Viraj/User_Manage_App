@@ -6,7 +6,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { useNavigate } from 'react-router-dom';
 import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spiner';
-import { addData } from '../../components/context/ContextProvider';
+import { addData,updateData} from '../../components/context/ContextProvider';
 import Alert from 'react-bootstrap/Alert';
 import { usergetfunc } from '../../services/Apis';
 
@@ -16,6 +16,7 @@ const [userdata,setUserdata] = useState([]);
 const [showspin,setShowspin] = useState(true);
 const {useradd,setUseradd} = useContext(addData)
 
+const {update,setUpdate} = useContext(updateData)
 const navigate = useNavigate();
 
 const adduser = () =>{
@@ -42,8 +43,12 @@ useEffect(() => {
 
   return (
     <>
-      {
-      useradd ?  <Alert variant="success" onClose={() => setUseradd("")} dismissible>{useradd.fname.toUpperCase()} Successfully Added </Alert>:""
+    {
+      useradd ?  <Alert variant="success"  onClose={() => setUseradd("")} dismissible>{useradd.fname.toUpperCase()} Successfully Added </Alert>:""
+    }
+
+    {
+      update  ?   <Alert variant="primary" onClose={() => setUpdate("")} dismissible>{update.fname.toUpperCase()} Successfully Updated </Alert>:""
     }
     <div className='container'>
       <div className='main_div'>
