@@ -77,6 +77,9 @@ const Edit = () => {
     }
   }
 
+  useEffect(() => {
+    userProfileGet();
+  },[id])
 
   useEffect(() => {
     if(image){
@@ -109,9 +112,7 @@ const Edit = () => {
       toast.error("Gender is Required !")
     } else if (status === "") {
       toast.error("Status is Required !")
-    } else if (image === "") {
-      toast.error("Profile is Required !")
-    } else if (location === "") {
+    }  else if (location === "") {
       toast.error("location is Required !")
     } else{
       const data = new FormData();
