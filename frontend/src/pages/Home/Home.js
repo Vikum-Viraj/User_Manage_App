@@ -6,7 +6,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { useNavigate } from 'react-router-dom';
 import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spiner';
-import { addData,updateData} from '../../components/context/ContextProvider';
+import { addData,dltdata,updateData} from '../../components/context/ContextProvider';
 import Alert from 'react-bootstrap/Alert';
 import { usergetfunc,deletefunc } from '../../services/Apis';
 import { toast } from 'react-toastify';
@@ -19,6 +19,8 @@ const [showspin,setShowspin] = useState(true);
 const {useradd,setUseradd} = useContext(addData)
 
 const {update,setUpdate} = useContext(updateData)
+const {deletedata,setDLtdata } = useContext(dltdata);
+
 const navigate = useNavigate();
 
 const adduser = () =>{
@@ -42,6 +44,7 @@ const deleteUser = async(id) => {
    const response = await deletefunc(id)
    if( response.status === 200){
      userGet();
+     setDLtdata(response.data)
    }else{
      toast.error("error")
    }
@@ -62,6 +65,10 @@ useEffect(() => {
 
     {
       update  ?   <Alert variant="primary" onClose={() => setUpdate("")} dismissible>{update.fname.toUpperCase()} Successfully Updated </Alert>:""
+    }
+
+    {
+      deletedata ? <Alert variant="danger" onClose={() => setDLtdata("")} dismissible>{deletedata.fname.toUpperCase()} Successfully Deleted </Alert>:""
     }
     <div className='container'>
       <div className='main_div'>
