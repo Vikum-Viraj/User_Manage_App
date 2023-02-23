@@ -34,8 +34,13 @@ exports.userpost = async (req, res) => {
 //get user
 exports.userget = async (req, res) => {
     
+    const search = req.query.search || ""
+    const query = {
+        fname : {$regex:search,$options:"i"}
+    }
     try{
-        const userdata = await users.find()
+       
+        const userdata = await users.find(query)
         res.status(200).json(userdata)
     }catch(error){
         res.status(401).json(error)

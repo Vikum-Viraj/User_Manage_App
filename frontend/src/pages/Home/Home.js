@@ -16,6 +16,7 @@ const Home = () => {
 
 const [userdata,setUserdata] = useState([]);
 const [showspin,setShowspin] = useState(true);
+const [search,setSearch]     = useState("")
 const {useradd,setUseradd} = useContext(addData)
 
 const {update,setUpdate} = useContext(updateData)
@@ -30,7 +31,7 @@ const adduser = () =>{
 //geuser
 const userGet = async() =>{
 
-  const response = await usergetfunc()
+  const response = await usergetfunc(search)
   console.log(response)
   if(response.status === 200){
     setUserdata(response.data)
@@ -55,7 +56,7 @@ useEffect(() => {
   setTimeout(() =>{
     setShowspin(false)
   },1200)
-},[])
+},[search])
 
   return (
     <>
@@ -81,6 +82,7 @@ useEffect(() => {
               placeholder="Search"
               className="me-2"
               aria-label="Search"
+              onChange={(e) =>setSearch(e.target.value)}
             />
             <Button variant="outline-success" className='search_btn'>Search</Button>
           </Form>
