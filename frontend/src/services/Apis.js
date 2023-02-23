@@ -20,11 +20,11 @@ export const editfunc = async(id,data,header)=>{
     return await commonrequest("PUT",`${BASE_URL}/user/edit/${id}`,data,header);
 }
 
-/*
-    export const deletfunc = async(id)=>{
-        return await commonrequest("DELETE",`${BASE_URL}/user/delete/${id}`,{});
-    }
 
+export const deletefunc = async(id)=>{
+    return await commonrequest("DELETE",`${BASE_URL}/user/delete/${id}`,{});
+}
+/*
     export const statuschangefunc = async(id,data)=>{
         return await commonrequest("PUT",`${BASE_URL}/user/status/${id}`,{data})
     }

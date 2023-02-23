@@ -8,7 +8,9 @@ import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spiner';
 import { addData,updateData} from '../../components/context/ContextProvider';
 import Alert from 'react-bootstrap/Alert';
-import { usergetfunc } from '../../services/Apis';
+import { usergetfunc,deletefunc } from '../../services/Apis';
+import { toast } from 'react-toastify';
+
 
 const Home = () => {
 
@@ -23,6 +25,7 @@ const adduser = () =>{
   navigate("/register")
 }
 
+//geuser
 const userGet = async() =>{
 
   const response = await usergetfunc()
@@ -32,6 +35,16 @@ const userGet = async() =>{
   }else{
     console.log("Error for get user")
   }
+}
+//userdelete
+const deleteUser = async(id) => {
+  console.log(id)
+   const response = await deletefunc(id)
+   if( response.status === 200){
+     userGet();
+   }else{
+     toast.error("error")
+   }
 }
 
 useEffect(() => {
@@ -147,7 +160,7 @@ useEffect(() => {
           </div>
       </div><br></br>
       {
-        showspin ? <Spiner/> : <Tables userdata={userdata}/>
+        showspin ? <Spiner/> : <Tables userdata={userdata} deleteUser={deleteUser}/>
       }
       
     </div>

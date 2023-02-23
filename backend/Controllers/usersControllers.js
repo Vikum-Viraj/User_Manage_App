@@ -1,6 +1,6 @@
 const users = require("../models/userSchema")
 const moment = require("moment")
-
+//
 exports.userpost = async (req, res) => {
     const file = req.file.filename;
     const { fname, lname, email, mobile, gender, location, status } = req.body;
@@ -83,4 +83,15 @@ exports.useredit  = async(req,res) => {
     }
 
 
+}
+
+//delete user
+exports.userdelete = async(req,res) => {
+    const {id} = req.params
+    try{
+        const deleteuser = await users.findByIdAndDelete({_id:id})
+        res.status(200).json(deleteuser)
+    }catch(error){
+        res.status(401).json(error)
+    }
 }

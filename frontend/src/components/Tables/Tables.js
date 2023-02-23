@@ -8,7 +8,7 @@ import Badge from 'react-bootstrap/Badge';
 import { BASE_URL } from '../../services/helper';
 import { NavLink } from 'react-router-dom';
 
-const Tables = ({userdata}) => {
+const Tables = ({userdata,deleteUser}) => {
   return (
     <>
     <div className='container'>
@@ -72,7 +72,9 @@ const Tables = ({userdata}) => {
                   </NavLink>
                   </Dropdown.Item>
                   <Dropdown.Item >
-                  <i class="fa-light fa-trash" style={{color:"red"}}></i> <span>Delete</span>
+                    <div onClick={() =>deleteUser(element._id)}>
+                    <i class="fa-light fa-trash" style={{color:"red"}}></i> <span>Delete</span>
+                    </div>
                   </Dropdown.Item>
                 </Dropdown.Menu>
           </Dropdown>
