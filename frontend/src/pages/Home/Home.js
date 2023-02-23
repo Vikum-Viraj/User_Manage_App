@@ -18,6 +18,7 @@ const [userdata,setUserdata] = useState([]);
 const [showspin,setShowspin] = useState(true);
 const [search,setSearch]     = useState("")
 const {useradd,setUseradd} = useContext(addData)
+const [gender,setGender]  = useState("All")
 
 const {update,setUpdate} = useContext(updateData)
 const {deletedata,setDLtdata } = useContext(dltdata);
@@ -31,7 +32,7 @@ const adduser = () =>{
 //geuser
 const userGet = async() =>{
 
-  const response = await usergetfunc(search)
+  const response = await usergetfunc(search,gender)
   console.log(response)
   if(response.status === 200){
     setUserdata(response.data)
@@ -56,7 +57,7 @@ useEffect(() => {
   setTimeout(() =>{
     setShowspin(false)
   },1200)
-},[search])
+},[search,gender])
 
   return (
     <>
@@ -105,6 +106,7 @@ useEffect(() => {
             label={`All`}
             name="gender"
             value={"All"}
+            onChange={(e) =>setGender(e.target.value)}
             defaultChecked
           />
             <Form.Check 
@@ -112,6 +114,7 @@ useEffect(() => {
             label={`Male`}
             name="gender"
             value={"Male"}
+            onChange={(e) =>setGender(e.target.value)}
   
           />
             <Form.Check 
@@ -119,7 +122,8 @@ useEffect(() => {
             label={`Female`}
             name="gender"
             value={"Female"}
-         
+            onChange={(e) =>setGender(e.target.value)}
+
           />
           </div>
           </div>

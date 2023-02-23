@@ -35,11 +35,16 @@ exports.userpost = async (req, res) => {
 exports.userget = async (req, res) => {
     
     const search = req.query.search || ""
+    const gender = req.query.gender || ""
+
     const query = {
         fname : {$regex:search,$options:"i"}
     }
+    if(gender !== "All"){
+       query.gender = gender
+    }
+
     try{
-       
         const userdata = await users.find(query)
         res.status(200).json(userdata)
     }catch(error){
