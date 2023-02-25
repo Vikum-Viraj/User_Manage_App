@@ -20,6 +20,8 @@ const [search,setSearch]     = useState("")
 const [gender,setGender]     = useState("All")
 const [status,setStatus]     = useState("All")
 const [sort,setSort]         = useState("new")
+const [page,setPage]         = useState(1)
+const [pageCount,setPageCount] = useState(0)
 
 const {useradd,setUseradd} = useContext(addData)
 
@@ -35,10 +37,11 @@ const adduser = () =>{
 //geuser
 const userGet = async() =>{
 
-  const response = await usergetfunc(search,gender,status,sort)
-  //console.log(response)
+  const response = await usergetfunc(search,gender,status,sort,page)
+  //console.log(response.data.Pagination.pageCount)
   if(response.status === 200){
-    setUserdata(response.data)
+    setUserdata(response.data.userdata)
+    setPageCount(response.data.Pagination.pageCount)
   }else{
     console.log("Error for get user")
   }
@@ -64,12 +67,28 @@ const exportuser = async() => {
   }
 }
 
+//pagination
+const handlePrevious = () =>{
+  setPage(() => {
+    if(page === 1) return page;
+    return page - 1
+  })
+}
+
+//handle next btn
+const handleNext = () => {
+    setPage(() => {
+      if(page === pageCount) return page;
+      return page + 1;
+    })
+}
+
 useEffect(() => {
   userGet();
   setTimeout(() =>{
     setShowspin(false)
   },1200)
-},[search,gender,status,sort])
+},[search,gender,status,sort,page])
 
   return (
     <>
@@ -187,7 +206,15 @@ useEffect(() => {
           </div>
       </div><br></br>
       {
-        showspin ? <Spiner/> : <Tables userdata={userdata} deleteUser={deleteUser} userGet={userGet}/>
+        showspin ? <Spiner/> : <Tables 
+                          userdata={userdata}
+                          deleteUser={deleteUser}
+                          userGet={userGet}
+                          handlePrevious={handlePrevious}
+                          handleNext={handleNext} 
+                          page={page}
+                          pageCount={pageCount}
+                          setPage={setPage}/>
       }
       
     </div>

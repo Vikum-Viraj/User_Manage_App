@@ -42,7 +42,9 @@ exports.userget = async (req, res) => {
     const gender = req.query.gender || ""
     const status = req.query.status || ""
     const sort   = req.query.sort   || ""
-
+    const page   = req.query.page   || 1
+    const ITEM_PER_PAGE = 4;
+ 
     const query = {
         fname : {$regex:search,$options:"i"}
     }
@@ -55,9 +57,25 @@ exports.userget = async (req, res) => {
     }
 
     try{
+
+        const skip = (page - 1)* ITEM_PER_PAGE
+
+        const count = await users.countDocuments(query);
+        console.log(count)
+
         const userdata = await users.find(query)
-        .sort({datecreated:sort == "new" ? -1 : 1});
-        res.status(200).json(userdata)
+            .sort({datecreated:sort == "new" ? -1 : 1})
+            .limit(ITEM_PER_PAGE)
+            .skip(skip)
+
+        const pageCount = Math.ceil(count/ITEM_PER_PAGE)    
+
+        res.status(200).json({
+            Pagination:{
+                count,pageCount
+            },
+            userdata
+        })
     }catch(error){
         res.status(401).json(error)
     }

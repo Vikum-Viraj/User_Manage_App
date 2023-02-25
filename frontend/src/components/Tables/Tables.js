@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Paginations from '../pagination/Paginations';
 import Badge from 'react-bootstrap/Badge';
 import { BASE_URL } from '../../services/helper';
 import { NavLink } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { statuschangefunc } from '../../services/Apis';
 import { ToastContainer, toast } from 'react-toastify'
 
 
-const Tables = ({userdata,deleteUser,userGet}) => {
+const Tables = ({userdata,deleteUser,userGet,handlePrevious,handleNext,page,pageCount,setPage}) => {
 
   const handleChange = async(id,status) => {
       const response = await statuschangefunc(id,status)
@@ -48,7 +49,7 @@ const Tables = ({userdata,deleteUser,userGet}) => {
             return (
               <>
         <tr>
-        <td>{index}</td>
+        <td>{index + 1 + (page-1)*4}</td>
         <td>{element.fname + element.lname}</td>
         <td>{element.email}</td>
         <td>{element.gender}</td>
@@ -101,6 +102,13 @@ const Tables = ({userdata,deleteUser,userGet}) => {
         }  
       </tbody>
       </Table>
+      <Paginations
+        handlePrevious={handlePrevious}
+        handleNext={handleNext} 
+        page={page}
+        pageCount={pageCount}
+        setPage={setPage}
+      />
       </Card>  
       </div>  
       </Row>
