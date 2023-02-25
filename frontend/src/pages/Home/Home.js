@@ -8,7 +8,7 @@ import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spiner';
 import { addData,dltdata,updateData} from '../../components/context/ContextProvider';
 import Alert from 'react-bootstrap/Alert';
-import { usergetfunc,deletefunc } from '../../services/Apis';
+import { usergetfunc,deletefunc, exporttocsvfunc } from '../../services/Apis';
 import { toast } from 'react-toastify';
 
 
@@ -17,8 +17,11 @@ const Home = () => {
 const [userdata,setUserdata] = useState([]);
 const [showspin,setShowspin] = useState(true);
 const [search,setSearch]     = useState("")
+const [gender,setGender]     = useState("All")
+const [status,setStatus]     = useState("All")
+const [sort,setSort]         = useState("new")
+
 const {useradd,setUseradd} = useContext(addData)
-const [gender,setGender]  = useState("All")
 
 const {update,setUpdate} = useContext(updateData)
 const {deletedata,setDLtdata } = useContext(dltdata);
@@ -32,8 +35,8 @@ const adduser = () =>{
 //geuser
 const userGet = async() =>{
 
-  const response = await usergetfunc(search,gender)
-  console.log(response)
+  const response = await usergetfunc(search,gender,status,sort)
+  //console.log(response)
   if(response.status === 200){
     setUserdata(response.data)
   }else{
@@ -52,12 +55,21 @@ const deleteUser = async(id) => {
    }
 }
 
+const exportuser = async() => {
+  const response = await exporttocsvfunc()
+  if(response.status === 200){
+      window.open(response.data.downloadUrl,"blank")
+  }else{
+      toast.error("Error occured")
+  }
+}
+
 useEffect(() => {
   userGet();
   setTimeout(() =>{
     setShowspin(false)
   },1200)
-},[search,gender])
+},[search,gender,status,sort])
 
   return (
     <>
@@ -95,7 +107,7 @@ useEffect(() => {
           {/*export csv*/}
           <div  className="filter_div mt-5 d-flex justify-content-between flex-wrap">
           <div className="export_csv">
-          <Button className='export_btn' >Export To Csv</Button>
+          <Button className='export_btn' onClick={exportuser} >Export To Csv</Button>
           </div>
           <div className="filter_gender">
           <div className="filter">
@@ -136,8 +148,8 @@ useEffect(() => {
                   <i class="fa-solid fa-sort"></i>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item >New</Dropdown.Item>
-                  <Dropdown.Item >Old</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>setSort("new")}> New</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>setSort("old")}> Old</Dropdown.Item>
                 </Dropdown.Menu>
           </Dropdown>
           </div>
@@ -151,6 +163,7 @@ useEffect(() => {
                     label={`All`}
                     name="status"
                     value={"All"}
+                    onChange={(e) =>setStatus(e.target.value)}
                     defaultChecked
                   />
                   <Form.Check
@@ -158,6 +171,7 @@ useEffect(() => {
                     label={`Active`}
                     name="status"
                     value={"Active"}
+                    onChange={(e) =>setStatus(e.target.value)}
                   
                   />
                   <Form.Check
@@ -165,7 +179,7 @@ useEffect(() => {
                     label={`InActive`}
                     name="status"
                     value={"InActive"}
-                   
+                    onChange={(e) =>setStatus(e.target.value)}
                   />
           </div>
           </div>
@@ -173,7 +187,7 @@ useEffect(() => {
           </div>
       </div><br></br>
       {
-        showspin ? <Spiner/> : <Tables userdata={userdata} deleteUser={deleteUser}/>
+        showspin ? <Spiner/> : <Tables userdata={userdata} deleteUser={deleteUser} userGet={userGet}/>
       }
       
     </div>

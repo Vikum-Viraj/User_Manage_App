@@ -1,5 +1,9 @@
 const users = require("../models/userSchema")
 const moment = require("moment")
+const csv = require("fast-csv")
+const fs = require("fs")
+
+
 //
 exports.userpost = async (req, res) => {
     const file = req.file.filename;
@@ -36,16 +40,23 @@ exports.userget = async (req, res) => {
     
     const search = req.query.search || ""
     const gender = req.query.gender || ""
+    const status = req.query.status || ""
+    const sort   = req.query.sort   || ""
 
     const query = {
         fname : {$regex:search,$options:"i"}
     }
     if(gender !== "All"){
-       query.gender = gender
+        query.gender = gender
+    }
+
+    if(status !== "All"){
+        query.status = status
     }
 
     try{
         const userdata = await users.find(query)
+        .sort({datecreated:sort == "new" ? -1 : 1});
         res.status(200).json(userdata)
     }catch(error){
         res.status(401).json(error)
@@ -102,6 +113,76 @@ exports.userdelete = async(req,res) => {
         const deleteuser = await users.findByIdAndDelete({_id:id})
         res.status(200).json(deleteuser)
     }catch(error){
+        res.status(401).json(error)
+    }
+}
+
+exports.userstatus = async(req,res) => {
+
+    const {id} = req.params;
+    const {data} = req.body;
+
+    try{
+        const userstatusupdate = await users.findByIdAndUpdate({_id:id},{status:data},{new:true})
+        res.status(200).json(userstatusupdate)
+
+    }catch(error){
+        res.status(401).json(error)
+    }
+
+
+}
+
+exports.userExport = async(req,res) => {
+
+    try{
+
+        const userdata = await users.find();
+        const csvStream = csv.format({headers:true})
+
+        if(!fs.existsSync("public/files/export/")){
+            if(!fs.existsSync("public/files")){
+                fs.mkdirSync("public/files/")
+            }
+            if(!fs.existsSync("public/files/export")){
+                fs.mkdirSync("./public/files/export/")
+            }
+        }
+    
+        const writablestream = fs.createWriteStream(
+            "public/files/export/users.csv"
+        )
+        
+        csvStream.pipe(writablestream);
+
+        writablestream.on("finish",function(){
+            res.json({
+                downloadUrl:`http://localhost:5000/files/export/users.csv`
+            })
+        })
+
+        if(userdata.length > 0){
+            userdata.map((user) => {
+                csvStream.write({
+                    FirstName: user.fname ? user.fname : "-",
+                    LastName: user.lname ? user.lname : "-",
+                    Email: user.email ? user.email : "-",
+                    Phone: user.mobile ? user.mobile : "-",
+                    Gender: user.gender ? user.gender : "-",
+                    Status: user.status ? user.status : "-",
+                    Profile: user.profile ? user.profile : "-",
+                    Location: user.location ? user.location : "-",
+                    DateCreated: user.datecreated ? user.datecreated : "-",
+                    DateUpdated: user.dateUpdated ? user.dateUpdated : "-",
+                })
+            })
+        }
+
+        csvStream.end();
+        writablestream.end();
+
+    }catch(error){
+
         res.status(401).json(error)
     }
 }

@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/uploads",express.static("./uploads"));
 app.use(router)
+app.use("/files",express.static("./public/files"))
 
 mongoose.set('strictQuery', false);
 mongoose.connect(DB).then(() => console.log("Database Connected")).then(() => {
